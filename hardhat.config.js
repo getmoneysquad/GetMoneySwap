@@ -1,0 +1,1 @@
+require("@nomiclabs/hardhat-ethers");\nmodule.exports = {\n  defaultNetwork: "xrplEVM",\n  networks: {\n    xrplEVM: {\n      url: "https://rpc-evm-sidechain.xrpl.org",\n      chainId: 1440002,\n      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],\n    },\n  },\n  solidity: "0.8.19",\n};
