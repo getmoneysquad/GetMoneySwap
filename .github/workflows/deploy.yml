@@ -1,0 +1,90 @@
+name: Populate GetMoneySwap
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Populate Repo
+        run: |
+          mkdir contracts scripts
+          cat > contracts/UniswapV2Factory.sol << 'EOF'
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity =0.8.19;
+contract UniswapV2Factory { /* stub */ }
+EOF
+          cat > contracts/UniswapV2Router02.sol << 'EOF'
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity =0.8.19;
+contract UniswapV2Router02 { /* stub */ }
+EOF
+          cat > contracts/WETH9.sol << 'EOF'
+// SPDX-License-Identifier: MIT
+pragma solidity =0.8.19;
+contract WETH9 { /* stub */ }
+EOF
+          mkdir scripts
+          cat > scripts/deploy.js << 'EOF'
+async function main() {
+  console.log("Deploy script placeholder");
+}
+main();
+EOF
+          cat > hardhat.config.js << 'EOF'
+require("@nomiclabs/hardhat-ethers");
+module.exports = {
+  defaultNetwork: "xrplEVM",
+  networks: {
+    xrplEVM: {
+      url: "https://rpc-evm-sidechain.xrpl.org",
+      chainId: 1440002,
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+    },
+  },
+  solidity: "0.8.19",
+};
+EOF
+          cat > .env.example << 'EOF'
+# Rename to .env and add your private key:
+# PRIVATE_KEY=0xyourprivatekey
+EOF
+          cat > README.md << 'EOF'
+# GetMoneySwap
+## Quickstart
+1. \`git clone https://github.com/getmoneysquad/GetMoneySwap.git\`
+2. \`cd GetMoneySwap && npm install\`
+3. Create \`.env\` from \`.env.example\`
+4. \`npx hardhat run scripts/deploy.js --network xrplEVM\`
+EOF
+          cat > package.json << 'EOF'
+{
+  "name": "getmoneyswap",
+  "version": "1.0.0",
+  "scripts": {
+    "deploy": "npx hardhat run scripts/deploy.js --network xrplEVM"
+  },
+  "devDependencies": {
+    "hardhat": "^2.16.0",
+    "@nomiclabs/hardhat-ethers": "^2.1.1",
+    "ethers": "^5.7.2"
+  }
+}
+EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "Populate GetMoneySwap repo"
+          git push origin main
